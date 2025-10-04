@@ -88,8 +88,10 @@ public:
     std::shared_ptr<WorkspaceInterface> get_workspace() const override;
     void set_workspace(std::shared_ptr<WorkspaceInterface> const&) override;
     std::shared_ptr<OutputInterface> get_output() const override;
-    glm::mat4 get_transform() const override;
-    void set_transform(glm::mat4 transform) override;
+    glm::mat4 animation_transform() const override;
+    void animation_transform(glm::mat4 transform) override;
+    glm::mat4 mode_transform() const override;
+    void mode_transform(glm::mat4 const& transform) override;
     void on_workspace_transform() override;
     void set_alpha(float alpha) override;
     uint32_t animation_handle() const override;
@@ -137,7 +139,8 @@ private:
     std::optional<MirWindowState> before_shown_state;
     std::optional<MirWindowState> next_state;
     std::optional<MirDepthLayer> next_depth_layer;
-    glm::mat4 transform = glm::mat4(1.f);
+    glm::mat4 animation_transform_ = glm::mat4(1.f);
+    glm::mat4 mode_transform_ = glm::mat4(1.f);
     uint32_t animation_handle_ = 0;
     bool is_dragging_ = false;
     geom::Point dragged_position;

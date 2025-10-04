@@ -170,7 +170,7 @@ void LeafContainer::associate_to_window(miral::Window const& in_window)
                     .surface = window()->operator std::shared_ptr<mir::scene::Surface>().get(),
                     .needs_outline = needs_outline(*this),
                     .is_focused = is_focused(),
-                    .transform = get_transform(),
+                    .transform = animation_transform(),
                     .workspace_transform = workspace_transform(*this),
                     .output_area = get_output()->get_area() }
     });
@@ -673,19 +673,35 @@ glm::mat4 LeafContainer::full_transform() const
 {
     return get_output_transform()
         * get_workspace_transform()
-        * get_transform();
+        * mode_transform()
+        * animation_transform();
 }
 
-glm::mat4 LeafContainer::get_transform() const
+glm::mat4 LeafContainer::animation_transform() const
 {
-    return transform;
+    return animation_transform_;
 }
 
-void LeafContainer::set_transform(glm::mat4 transform_)
+void LeafContainer::animation_transform(glm::mat4 transform_)
 {
-    transform = transform_;
-    state->render_data_manager()->transform_change(id, transform_);
-    if (auto surface = window_.operator std::shared_ptr<mir::scene::Surface>())
+    animation_transform_ = transform_;
+    state->render_data_manager()->transform_change(id, mode_transform_ * animation_transform_);
+    if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
+    {
+        surface->set_transformation(full_transform());
+    }
+}
+
+glm::mat4 LeafContainer::mode_transform() const
+{
+    return mode_transform_;
+}
+
+void LeafContainer::mode_transform(glm::mat4 const& transform_)
+{
+    mode_transform_ = transform_;
+    state->render_data_manager()->transform_change(id, mode_transform_ * animation_transform_);
+    if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
     {
         surface->set_transformation(full_transform());
     }

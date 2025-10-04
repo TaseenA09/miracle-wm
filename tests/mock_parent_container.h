@@ -59,8 +59,10 @@ namespace test
         MOCK_METHOD(std::shared_ptr<WorkspaceInterface>, get_workspace, (), (const, override));
         MOCK_METHOD(void, set_workspace, (std::shared_ptr<WorkspaceInterface> const&), (override));
         MOCK_METHOD(std::shared_ptr<OutputInterface>, get_output, (), (const, override));
-        MOCK_METHOD(glm::mat4, get_transform, (), (const, override));
-        MOCK_METHOD(void, set_transform, (glm::mat4), (override));
+        MOCK_METHOD(glm::mat4, animation_transform, (), (const, override));
+        MOCK_METHOD(void, animation_transform, (glm::mat4), (override));
+        MOCK_METHOD(glm::mat4, mode_transform, (), (const, override));
+        MOCK_METHOD(void, mode_transform, (glm::mat4 const&), (override));
         MOCK_METHOD(void, on_workspace_transform, (), (override));
         MOCK_METHOD(glm::mat4, get_workspace_transform, (), (const, override));
         MOCK_METHOD(glm::mat4, get_output_transform, (), (const, override));

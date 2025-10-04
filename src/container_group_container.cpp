@@ -268,12 +268,21 @@ std::shared_ptr<OutputInterface> ContainerGroupContainer::get_output() const
     return nullptr;
 }
 
-glm::mat4 ContainerGroupContainer::get_transform() const
+glm::mat4 ContainerGroupContainer::animation_transform() const
 {
     return glm::mat4(1.f);
 }
 
-void ContainerGroupContainer::set_transform(glm::mat4 transform)
+void ContainerGroupContainer::animation_transform(glm::mat4 transform)
+{
+}
+
+glm::mat4 ContainerGroupContainer::mode_transform() const
+{
+    return glm::mat4(1.f);
+}
+
+void ContainerGroupContainer::mode_transform(glm::mat4 const& transform)
 {
 }
 

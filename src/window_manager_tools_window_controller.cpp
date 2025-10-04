@@ -249,7 +249,7 @@ void WindowManagerToolsWindowController::process_animation(
             tools.modify_window(window, spec);
 
         if (result.transform)
-            container->set_transform(result.transform.value());
+            container->animation_transform(result.transform.value());
 
         if (result.opacity != std::nullopt)
             container->set_alpha(result.opacity.value());

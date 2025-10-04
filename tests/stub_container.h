@@ -163,12 +163,21 @@ namespace test
             return nullptr;
         }
 
-        glm::mat4 get_transform() const override
+        glm::mat4 animation_transform() const override
         {
             return glm::mat4(1.f);
         }
 
-        void set_transform(glm::mat4 transform) override
+        void animation_transform(glm::mat4 transform) override
+        {
+        }
+
+        glm::mat4 mode_transform() const override
+        {
+            return glm::mat4(1.f);
+        }
+
+        void mode_transform(glm::mat4 const& transform) override
         {
         }
 

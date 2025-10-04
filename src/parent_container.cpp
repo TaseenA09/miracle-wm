@@ -769,12 +769,21 @@ std::shared_ptr<OutputInterface> ParentContainer::get_output() const
     return get_workspace()->get_output();
 }
 
-glm::mat4 ParentContainer::get_transform() const
+glm::mat4 ParentContainer::animation_transform() const
 {
     return glm::mat4(1.f);
 }
 
-void ParentContainer::set_transform(glm::mat4 transform)
+void ParentContainer::animation_transform(glm::mat4 transform)
+{
+}
+
+glm::mat4 ParentContainer::mode_transform() const
+{
+    return glm::mat4(1.f);
+}
+
+void ParentContainer::mode_transform(glm::mat4 const& transform)
 {
 }
 

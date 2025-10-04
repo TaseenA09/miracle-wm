@@ -118,7 +118,7 @@ void DyingSurfaceManager::animate_dying_surface(std::shared_ptr<Container> const
         container->get_visible_area(),
         geom::Rectangle {},
         container->get_visible_area(),
-        container->get_transform(),
+        container->mode_transform() * container->animation_transform(),
         container->get_output_transform() * container->get_workspace_transform(),
         output_area,
         [surface_stack = surface_stack, animating_surface = animating_surface]

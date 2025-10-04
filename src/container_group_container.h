@@ -73,8 +73,10 @@ public:
     std::shared_ptr<WorkspaceInterface> get_workspace() const override;
     void set_workspace(std::shared_ptr<WorkspaceInterface> const&) override { }
     std::shared_ptr<OutputInterface> get_output() const override;
-    glm::mat4 get_transform() const override;
-    void set_transform(glm::mat4 transform) override;
+    glm::mat4 animation_transform() const override;
+    void animation_transform(glm::mat4 transform) override;
+    glm::mat4 mode_transform() const override;
+    void mode_transform(glm::mat4 const& transform) override;
     void on_workspace_transform() override;
     glm::mat4 get_workspace_transform() const override;
     glm::mat4 get_output_transform() const override;

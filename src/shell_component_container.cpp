@@ -167,18 +167,28 @@ std::shared_ptr<OutputInterface> ShellComponentContainer::get_output() const
     return nullptr;
 }
 
-glm::mat4 ShellComponentContainer::get_transform() const
+glm::mat4 ShellComponentContainer::animation_transform() const
 {
     return transform_;
 }
 
-void ShellComponentContainer::set_transform(glm::mat4 transform)
+void ShellComponentContainer::animation_transform(glm::mat4 transform)
 {
-    if (auto surface = window_.operator std::shared_ptr<mir::scene::Surface>())
-    {
-        surface->set_transformation(transform);
-        transform_ = transform;
-    }
+    transform_ = transform;
+    if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
+        surface->set_transformation(mode_transform_ * transform_);
+}
+
+glm::mat4 ShellComponentContainer::mode_transform() const
+{
+    return mode_transform_;
+}
+
+void ShellComponentContainer::mode_transform(glm::mat4 const& transform_)
+{
+    mode_transform_ = transform_;
+    if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
+        surface->set_transformation(mode_transform_ * transform_);
 }
 
 void ShellComponentContainer::on_workspace_transform()

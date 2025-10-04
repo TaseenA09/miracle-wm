@@ -98,18 +98,30 @@ public:
     virtual void set_workspace(std::shared_ptr<WorkspaceInterface> const&) = 0;
     virtual std::shared_ptr<OutputInterface> get_output() const = 0;
 
-    /// Retrieve the current transform of this node.
+    /// Retrieve the current animation transform of this container.
     ///
     /// This does NOT include the output and workspace transforms. This is intended
     /// for use by the animation system.
     ///
-    /// \returns the transform on the node
-    virtual glm::mat4 get_transform() const = 0;
+    /// \returns the animation transform on the container.
+    virtual glm::mat4 animation_transform() const = 0;
 
-    /// Sets the transform of this node.
+    /// Sets the animation transform of this container.
     ///
     ///\param transform
-    virtual void set_transform(glm::mat4 transform) = 0;
+    virtual void animation_transform(glm::mat4 transform) = 0;
+
+    /// The transform on the container applied by the mode on this container.
+    ///
+    /// This is applied /after/ #animation_transform.
+    ///
+    /// \returns the mode transform on the container
+    virtual glm::mat4 mode_transform() const = 0;
+
+    /// Sets the mode transform on te container.
+    ///
+    /// \param transform
+    virtual void mode_transform(glm::mat4 const& transform) = 0;
 
     virtual void on_workspace_transform() = 0;
     virtual glm::mat4 get_workspace_transform() const;
