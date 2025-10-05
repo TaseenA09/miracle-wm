@@ -79,6 +79,7 @@ struct ProgramData
     GLint display_transform_uniform = -1;
     GLint workspace_transform_uniform = -1;
     GLint transform_uniform = -1;
+    GLint mode_transform_uniform = -1;
     GLint screen_to_gl_coords_uniform = -1;
     GLint alpha_uniform = -1;
     GLint surface_size_uniform = -1;

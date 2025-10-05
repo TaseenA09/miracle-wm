@@ -542,11 +542,11 @@ void Renderer::draw(
         glm::vec4 clip_pos(clip_area.value().top_left.x.as_int(), clip_y, 0, 1);
         clip_pos = display_transform * data.data.workspace_transform * clip_pos;
 
-        glScissor(
-            static_cast<GLint>((static_cast<int>(clip_pos.x) - viewport.top_left.x.as_int()) * x_scale),
-            static_cast<GLint>(clip_pos.y * y_scale),
-            static_cast<GLint>(clip_area.value().size.width.as_int() * x_scale),
-            static_cast<GLint>(clip_area.value().size.height.as_int() * y_scale));
+        // glScissor(
+        //     static_cast<GLint>((static_cast<int>(clip_pos.x) - viewport.top_left.x.as_int()) * x_scale),
+        //     static_cast<GLint>(clip_pos.y * y_scale),
+        //     static_cast<GLint>(clip_area.value().size.width.as_int() * x_scale),
+        //     static_cast<GLint>(clip_area.value().size.height.as_int() * y_scale));
     }
     auto const surface_size = clip_area.value_or(renderable.screen_position()).size;
 
@@ -581,6 +581,7 @@ void Renderer::draw(
     auto const centrey = static_cast<GLfloat>(rect.top_left.y.as_int() + rect.size.height.as_int()) / 2.0f;
     glUniform2f(prog->center_uniform, centrex, centrey);
 
+
     glm::mat4 transform = data.data.transform;
     if (texture->layout() == mg::gl::Texture::Layout::TopRowFirst)
     {
@@ -594,6 +595,8 @@ void Renderer::draw(
         };
     }
 
+    glUniformMatrix4fv(prog->mode_transform_uniform, 1, GL_FALSE,
+        glm::value_ptr(data.data.mode_transform));
     glUniformMatrix4fv(prog->transform_uniform, 1, GL_FALSE,
         glm::value_ptr(transform));
     glUniform1f(prog->border_radius_uniform, data.data.needs_outline ? config->get_border_config().radius : 0);
@@ -737,6 +740,8 @@ void Renderer::draw_border(ms::Surface const& surface, DrawData const& data) con
     auto const centrex = static_cast<GLfloat>(border_rect.top_left.x.as_int() + border_rect.size.width.as_int()) / 2.0f;
     auto const centrey = static_cast<GLfloat>(border_rect.top_left.y.as_int() + border_rect.size.height.as_int()) / 2.0f;
     glUniform2f(prog->center_uniform, centrex, centrey);
+    glUniformMatrix4fv(prog->mode_transform_uniform, 1, GL_FALSE,
+        glm::value_ptr(data.data.mode_transform));
     glUniformMatrix4fv(prog->transform_uniform, 1, GL_FALSE,
         glm::value_ptr(data.data.transform));
     glUniformMatrix4fv(prog->border_transform_uniform, 1, GL_FALSE,

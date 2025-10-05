@@ -31,6 +31,7 @@ attribute vec2 texcoord;
 uniform mat4 screen_to_gl_coords;
 uniform mat4 display_transform;
 uniform mat4 workspace_transform;
+uniform mat4 mode_transform;
 uniform mat4 transform;
 uniform vec2 center;
 
@@ -39,7 +40,7 @@ varying vec2 v_texcoord;
 void main() {
    vec4 p = vec4(center, 0.0, 0.0);
    vec4 transformed = (transform * (vec4(position, 1.0) - p)) + p;
-   gl_Position = display_transform * screen_to_gl_coords * workspace_transform * transformed;
+   gl_Position = display_transform * screen_to_gl_coords * workspace_transform * mode_transform * transformed;
    v_texcoord = texcoord;
 }
 )";
@@ -52,6 +53,7 @@ uniform mat4 screen_to_gl_coords;
 uniform mat4 display_transform;
 uniform mat4 workspace_transform;
 uniform mat4 border_transform;
+uniform mat4 mode_transform;
 uniform mat4 transform;
 uniform vec2 center;
 
@@ -67,7 +69,7 @@ void main() {
    p = vec4(center, 0.0, 0.0);
    transformed = (transform * (transformed - p)) + p;
 
-   gl_Position = display_transform * screen_to_gl_coords * workspace_transform * transformed;
+   gl_Position = display_transform * screen_to_gl_coords * workspace_transform * mode_transform * transformed;
    v_texcoord = texcoord;
 }
 )";
@@ -146,6 +148,10 @@ miracle::ProgramData::ProgramData(GLuint program_id)
     workspace_transform_uniform = glGetUniformLocation(id, "workspace_transform");
     if (workspace_transform_uniform < 0)
         mir::log_warning("Program is missing workspace_transform_uniform");
+
+    mode_transform_uniform = glGetUniformLocation(id, "mode_transform");
+    if (mode_transform_uniform < 0)
+        mir::log_warning("Program is missing mode_transform_uniform");
 
     transform_uniform = glGetUniformLocation(id, "transform");
     if (transform_uniform < 0)

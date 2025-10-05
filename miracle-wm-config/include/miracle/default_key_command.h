@@ -68,6 +68,8 @@ enum class MIRACLE_WM_CONFIG_API DefaultKeyCommand
     TogglePinnedToWorkspace,
     ToggleTabbing,
     ToggleStacking,
+    EnterOverviewMode,
+    ExitOverviewMode,
     MAX
 };
 
@@ -114,7 +116,9 @@ constexpr std::array<const char*, static_cast<int>(DefaultKeyCommand::MAX)> defa
     "toggle_floating",
     "toggle_pinned_to_workspace",
     "toggle_tabbing",
-    "toggle_stacking"
+    "toggle_stacking",
+    "enter_overview",
+    "exit_overview"
 };
 
 }

@@ -344,6 +344,10 @@ bool Policy::handle_keyboard_event(MirKeyboardEvent const* event)
             return command_controller->toggle_tabbing({});
         case DefaultKeyCommand::ToggleStacking:
             return command_controller->toggle_stacking({});
+        case DefaultKeyCommand::EnterOverviewMode:
+            return command_controller->enter_overview_mode();
+        case DefaultKeyCommand::ExitOverviewMode:
+            return command_controller->exit_overview_mode();
         default:
             mir::log_error("Unknown key_command: %d", std::to_underlying(key_command));
             break;

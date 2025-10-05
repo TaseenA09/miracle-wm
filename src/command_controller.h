@@ -37,6 +37,7 @@ namespace miracle
 class Scratchpad;
 class ModeObserverRegistrar;
 class OutputManager;
+class OverviewMode;
 
 enum class LayoutRequestType
 {
@@ -172,6 +173,8 @@ public:
     virtual bool set_outer_gaps(size_t px, OuterGapsChange outer_gaps_change, GapsChangeType, bool current_workspace_only) = 0;
     virtual bool try_move_workspace_to_output(OutputSelection selection) = 0;
     virtual bool try_move_workspace_to_outputs_by_name(std::vector<std::string> const& outputs) = 0;
+    virtual bool enter_overview_mode() = 0;
+    virtual bool exit_overview_mode() = 0;
     [[nodiscard]] virtual nlohmann::json to_json() const = 0;
     [[nodiscard]] virtual nlohmann::json outputs_json() const = 0;
     [[nodiscard]] virtual nlohmann::json workspaces_json() const = 0;
@@ -282,6 +285,8 @@ public:
     bool set_outer_gaps(size_t px, OuterGapsChange outer_gaps_change, GapsChangeType, bool current_workspace_only) override;
     bool try_move_workspace_to_output(OutputSelection selection) override;
     bool try_move_workspace_to_outputs_by_name(std::vector<std::string> const& outputs) override;
+    bool enter_overview_mode() override;
+    bool exit_overview_mode() override;
     [[nodiscard]] nlohmann::json to_json() const override;
     [[nodiscard]] nlohmann::json outputs_json() const override;
     [[nodiscard]] nlohmann::json workspaces_json() const override;
@@ -298,6 +303,7 @@ private:
     std::unique_ptr<CommandControllerInterface> interface;
     std::shared_ptr<Scratchpad> scratchpad_;
     std::shared_ptr<OutputManager> output_manager;
+    std::shared_ptr<OverviewMode> overview_mode;
 
     bool can_move_container() const;
     bool can_set_layout() const;

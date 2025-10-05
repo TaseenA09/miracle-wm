@@ -493,7 +493,13 @@ bool FilesystemConfiguration::matches_key_command(
          KEY_W     },
         { mir_keyboard_action_down,
          miracle_input_event_modifier_default,
-         KEY_S     }
+         KEY_S     },
+        { mir_keyboard_action_up,
+         0,
+         KEY_LEFTCTRL     },
+        { mir_keyboard_action_up,
+         0,
+         KEY_LEFTCTRL     }
     };
 
     auto const try_run_key_command = [&](KeyCommand const& command, DefaultKeyCommand i)

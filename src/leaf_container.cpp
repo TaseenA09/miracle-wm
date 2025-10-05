@@ -685,7 +685,7 @@ glm::mat4 LeafContainer::animation_transform() const
 void LeafContainer::animation_transform(glm::mat4 transform_)
 {
     animation_transform_ = transform_;
-    state->render_data_manager()->transform_change(id, mode_transform_ * animation_transform_);
+    state->render_data_manager()->transform_change(id, animation_transform_);
     if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
     {
         surface->set_transformation(full_transform());
@@ -700,7 +700,7 @@ glm::mat4 LeafContainer::mode_transform() const
 void LeafContainer::mode_transform(glm::mat4 const& transform_)
 {
     mode_transform_ = transform_;
-    state->render_data_manager()->transform_change(id, mode_transform_ * animation_transform_);
+    state->render_data_manager()->mode_transform_change(id, mode_transform_);
     if (auto const surface = window_.operator std::shared_ptr<mir::scene::Surface>())
     {
         surface->set_transformation(full_transform());

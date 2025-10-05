@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "math_helpers.h"
 #include "mode_observer.h"
 #include "output_manager.h"
+#include "overview_mode.h"
 #include "parent_container.h"
 #include "scratchpad.h"
 #include "workspace_manager.h"
@@ -51,7 +52,8 @@ CommandController::CommandController(
     mode_observer_registrar { mode_observer_registrar },
     interface { std::move(interface) },
     scratchpad_ { scratchpad_ },
-    output_manager { output_manager }
+    output_manager { output_manager },
+    overview_mode(std::make_unique<OverviewMode>(state))
 {
 }
 
@@ -1951,6 +1953,18 @@ bool CommandController::try_move_workspace_to_outputs_by_name(std::vector<std::s
 
     workspace_manager->move_workspace_to_output(workspace->id(), output.get());
     return true;
+}
+
+bool CommandController::enter_overview_mode()
+{
+    std::lock_guard lock(mutex);
+    return overview_mode->enter();
+}
+
+bool CommandController::exit_overview_mode()
+{
+    std::lock_guard lock(mutex);
+    return overview_mode->exit();
 }
 
 nlohmann::json CommandController::to_json() const

@@ -49,6 +49,19 @@ void RenderDataManager::transform_change(RenderDataManagerId id, glm::mat4 const
     }
 }
 
+void RenderDataManager::mode_transform_change(RenderDataManagerId id, glm::mat4 const& transform)
+{
+    std::lock_guard lock(mutex);
+    for (auto& data : render_data)
+    {
+        if (data.id == id)
+        {
+            data.mode_transform = transform;
+            return;
+        }
+    }
+}
+
 void RenderDataManager::workspace_transform_change(RenderDataManagerId id, glm::mat4 const& transform)
 {
     std::lock_guard lock(mutex);

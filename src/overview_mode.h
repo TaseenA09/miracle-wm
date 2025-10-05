@@ -44,12 +44,12 @@ public:
     ///
     /// This will trigger an animation that will transform active windows to
     /// some predetermined location.
-    void enter();
+    bool enter();
 
     /// Exit overview mode.
     ///
     /// This will return windows to their original location.
-    void exit();
+    bool exit();
 
     /// Notification that a window has been created.
     ///
@@ -60,6 +60,7 @@ public:
     void advise_new_window(miral::WindowInfo const& info);
 
 private:
+    bool active { false };
     std::shared_ptr<CompositorState> state;
 };
 }
