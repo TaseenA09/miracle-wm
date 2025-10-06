@@ -85,7 +85,7 @@ void apply_transforms(std::vector<std::weak_ptr<Container>> const& containers)
 
             sh->mode_transform(transform);
 
-            info.max_y = std::max(info.max_y, scaled_size.y);
+            info.max_y = std::max(info.max_y, 2 * scaled_size.y);
             info.x += scaled_size.x * 2 + 20;
         }
     }
