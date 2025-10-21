@@ -18,12 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MIRACLE_WM_MATH_HELPERS_H
 #define MIRACLE_WM_MATH_HELPERS_H
 
+#include <mir/geometry/rectangle.h>
+
 namespace miracle
 {
 template <typename T>
 float as_float(T const& value)
 {
     return static_cast<float>(value.as_int());
+}
+
+mir::geometry::Point rectangle_center(mir::geometry::Rectangle const& r)
+{
+    return mir::geometry::Point {
+        mir::geometry::X{r.top_left.x.as_int() + (r.size.width.as_int() / 2.f)},
+        mir::geometry::Y{r.top_left.y.as_int() + (r.size.height.as_int() / 2.f)}
+    };
 }
 }
 

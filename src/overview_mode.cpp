@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor_state.h"
 #include "container.h"
 #include "output_interface.h"
+#include "math_helpers.h"
 
 #include <glm/ext/matrix_transform.hpp>
 
@@ -30,26 +31,55 @@ namespace
 struct OutputTransformInfo
 {
     OutputInterface const* output;
-    float x = 0;
-    float current_y = 0;
-    float max_y = 0;
+    std::vector<std::weak_ptr<Container>> containers;
 };
+
+geom::Rectangle window_area(miral::Window const& window)
+{
+    return geom::Rectangle {
+        window.top_left(),
+        window.size()
+    };
+}
 
 void apply_transforms(std::vector<std::weak_ptr<Container>> const& containers)
 {
+    // Algorithm:
+    // 1. There will be N number of transformed positions, where N = containers.size
+    // 2. Each container will be transformed to the closest container to itself
+
+    
+
     std::vector<OutputTransformInfo> info_list;
 
-    for (auto const& c : containers)
+    for (auto const& i : containers)
     {
-        if (auto const sh = c.lock())
+        if (auto const sh_i = i.lock())
         {
-            auto const output = sh->get_output();
+            auto const output = sh_i->get_output();
             if (!output)
                 continue;
 
-            auto const window = sh->window();
-            if (!window)
-                continue;
+            auto const i_area = window_area(sh_i->window().value());
+            auto const i_center = rectangle_center(i_area);
+
+            for (auto const& j : containers)
+            {
+                geom::Point force;
+                if (auto const sh_j = j.lock())
+                {
+                    if (sh_i == sh_j)
+                        continue;
+
+                    auto const j_area = window_area(sh_j->window().value());
+                    if (i_area.overlaps(j_area))
+                    {
+                        auto const j_center = rectangle_center(j_area);
+                        auto const distance = i_center - j_center;
+                        force = distance;
+                    }
+                }
+            }
 
             auto it = std::ranges::find_if(info_list, [&output](auto const& i) { return i.output == output.get(); });
             if (it == info_list.end())
@@ -83,10 +113,7 @@ void apply_transforms(std::vector<std::weak_ptr<Container>> const& containers)
             transform = glm::scale(transform, glm::vec3(scale_factor, scale_factor, 1.f));
             transform = glm::translate(transform, glm::vec3(displacement, 0.f));
 
-            sh->mode_transform(transform);
-
-            info.max_y = std::max(info.max_y, 2 * scaled_size.y);
-            info.x += scaled_size.x * 2 + 20;
+            sh_i->mode_transform(transform);
         }
     }
 }
