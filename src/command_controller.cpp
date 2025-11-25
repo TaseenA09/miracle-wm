@@ -1965,7 +1965,7 @@ nlohmann::json CommandController::to_json() const
         if (output->is_defunct())
             continue;
 
-        auto& area = output->get_area();
+        auto area = output->get_area();
 
         // Recalculate the total extents of the tree
         if (area.top_left.x.as_int() < top_left.x.as_int())

@@ -180,6 +180,7 @@ Policy::Policy(
         std::make_unique<MiralOutputFactory>(
             state,
             config,
+            scene_graph,
             window_controller,
             animator,
             display_config))),

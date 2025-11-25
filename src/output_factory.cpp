@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "output_factory.h"
 #include "display_config.h"
 #include "output.h"
+#include "scene_graph.h"
 
 #include <mir/log.h>
 
@@ -28,11 +29,13 @@ using namespace miracle;
 MiralOutputFactory::MiralOutputFactory(
     std::shared_ptr<CompositorState> const& state,
     std::shared_ptr<Config> const& config,
+    std::shared_ptr<SceneGraph> const& scene_graph,
     std::shared_ptr<WindowController> const& window_controller,
     std::shared_ptr<Animator> const& animator,
     std::shared_ptr<DisplayConfig> const& display_config) :
     state { state },
     config { config },
+    scene_graph { scene_graph },
     window_controller { window_controller },
     animator { animator },
     display_config { display_config }
@@ -52,6 +55,7 @@ std::shared_ptr<OutputInterface> MiralOutputFactory::create(
     return std::make_shared<Output>(
         std::move(name),
         id,
+        scene_graph->root(),
         area,
         raw_output_config,
         state,

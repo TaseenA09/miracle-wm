@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace miracle
 {
-class SceneGraph;
+class SceneNode;
 
 class Output final : public OutputInterface, public std::enable_shared_from_this<Output>
 {
@@ -31,11 +31,11 @@ public:
     explicit Output(
         std::string name,
         int id,
+        SceneNode& parent,
         geom::Rectangle const& area,
         OutputConfigDetails const& output_config,
         std::shared_ptr<CompositorState> const& state,
         std::shared_ptr<Config> const& options,
-        std::shared_ptr<SceneGraph> const& scene_graph,
         std::shared_ptr<WindowController> const&,
         std::shared_ptr<Animator> const&);
     ~Output() override;
@@ -66,7 +66,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<WorkspaceInterface> active() const override;
     [[nodiscard]] std::vector<std::shared_ptr<WorkspaceInterface>> const& get_workspaces() const override { return workspaces; }
-    [[nodiscard]] geom::Rectangle const& get_area() const override { return area; }
+    [[nodiscard]] geom::Rectangle get_area() const override;
     [[nodiscard]] std::vector<miral::Zone> const& get_app_zones() const override { return application_zone_list; }
     [[nodiscard]] std::string const& name() const override { return name_; }
     [[nodiscard]] bool is_defunct() const override { return is_defunct_; }
@@ -82,6 +82,7 @@ private:
 
     std::string name_;
     int id_;
+    SceneNode* scene_node_;
     OutputConfigDetails output_config;
     std::shared_ptr<CompositorState> state;
     std::shared_ptr<Config> config;
@@ -91,7 +92,6 @@ private:
     std::vector<std::shared_ptr<WorkspaceInterface>> workspaces;
     std::vector<miral::Zone> application_zone_list;
     AnimationHandle handle;
-
     bool is_defunct_ = false;
 };
 }

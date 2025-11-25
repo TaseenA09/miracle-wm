@@ -49,6 +49,13 @@ public:
     /// \param id of the node
     void remove_child(SceneNodeId id);
 
+    /// Retrieve the parent of this node.
+    ///
+    /// The parent may be nullptr if this node is the root.
+    ///
+    /// \returns the parent node
+    SceneNode* parent() const;
+
     glm::vec2 position() const;
     void position(glm::vec2 const& position);
     glm::vec2 size() const;
@@ -57,6 +64,19 @@ public:
     void transform(glm::mat4 const& transform);
     float opacity() const;
     void opacity(float opacity);
+
+    /// Check if \p p is contained within this node.
+    ///
+    /// This does not take the transform into account.
+    ///
+    /// \param p the point to check
+    /// \returns true if the point is within the node
+    bool contains(glm::vec2 const& p) const {
+        return p.x >= position_.x &&
+               p.x <= position_.x + size_.x &&
+               p.y >= position_.y &&
+               p.y <= position_.y + size_.y;
+    }
 
     /// The id of this node.
     SceneNodeId const id;

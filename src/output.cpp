@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor_state.h"
 #include "config.h"
 #include "leaf_container.h"
-#include "mir_version_manager.h"
+#include "geometry_helpers.h"
+#include "scene_graph.h"
 #include "vector_helpers.h"
 #include "workspace.h"
 #include "workspace_manager.h"
@@ -39,6 +40,7 @@ namespace mg = mir::graphics;
 Output::Output(
     std::string name,
     int id,
+    SceneNode& parent,
     geom::Rectangle const& area,
     OutputConfigDetails const& output_config,
     std::shared_ptr<CompositorState> const& state,
@@ -47,7 +49,7 @@ Output::Output(
     std::shared_ptr<Animator> const& animator) :
     name_ { std::move(name) },
     id_ { id },
-    area { area },
+    scene_node_(parent.add_child()),
     output_config { output_config },
     state { state },
     config { config },
@@ -55,11 +57,15 @@ Output::Output(
     animator { animator },
     handle { animator->register_animateable() }
 {
+    scene_node_->position(geometry_helpers::to_glm(area.top_left));
+    scene_node_->size(geometry_helpers::to_glm(area.size));
 }
 
 Output::~Output()
 {
     animator->remove_by_animation_handle(handle);
+    if (auto const parent = scene_node_->parent())
+        parent->remove_child(scene_node_->id);
 }
 
 std::shared_ptr<WorkspaceInterface> Output::active() const
@@ -68,6 +74,14 @@ std::shared_ptr<WorkspaceInterface> Output::active() const
         return nullptr;
 
     return active_workspace.lock();
+}
+
+geom::Rectangle Output::get_area() const
+{
+    return geom::Rectangle(
+        geometry_helpers::from_glm(scene_node_->position()),
+        geometry_helpers::size_from_glm(scene_node_->size())
+    );
 }
 
 std::shared_ptr<Container> Output::intersect(float x, float y)
@@ -281,8 +295,9 @@ bool Output::advise_workspace_active(WorkspaceManager& workspace_manager, uint32
     active_workspace = to;
 
     from->transfer_pinned_windows_to(to);
-    auto const from_end = to_index > from_index ? geom::Point(-area.size.width.as_int(), 0) : geom::Point(area.size.width.as_int(), 0);
-    auto const to_start = to_index > from_index ? geom::Point(area.size.width.as_int(), 0) : geom::Point(-area.size.width.as_int(), 0);
+    auto const size = scene_node_->size();
+    auto const from_end = to_index > from_index ? geom::Point(-size.x, 0) : geom::Point(size.x, 0);
+    auto const to_start = to_index > from_index ? geom::Point(size.x, 0) : geom::Point(-size.x, 0);
     to->show(to_start);
 
     // If [from] is empty, we can delete the workspace.
@@ -295,7 +310,7 @@ bool Output::advise_workspace_active(WorkspaceManager& workspace_manager, uint32
 
 void Output::advise_application_zone_create(miral::Zone const& application_zone)
 {
-    if (application_zone.extents().contains(area))
+    if (application_zone.extents().contains(get_area()))
     {
         application_zone_list.push_back(application_zone);
         for (auto& workspace : workspaces)
@@ -331,14 +346,15 @@ void Output::advise_application_zone_delete(miral::Zone const& application_zone)
 
 bool Output::point_is_in_output(int x, int y)
 {
-    return area.contains(geom::Point(x, y));
+    return scene_node_->contains(glm::vec2(x, y));
 }
 
 void Output::update_area(geom::Rectangle const& new_area)
 {
-    area = new_area;
+    scene_node_->position(geometry_helpers::to_glm(new_area.top_left));
+    scene_node_->position(geometry_helpers::to_glm(new_area.size));
     for (auto& workspace : workspaces)
-        workspace->set_area(area);
+        workspace->set_area(new_area);
 }
 
 void Output::graft(std::shared_ptr<Container> const& container)
@@ -359,12 +375,12 @@ void Output::graft(std::shared_ptr<Container> const& container)
 
 glm::mat4 Output::get_transform() const
 {
-    return transform;
+    return scene_node_->transform();
 }
 
 void Output::set_transform(glm::mat4 const& in)
 {
-    transform = in;
+    scene_node_->transform(in);
 }
 
 void Output::set_info(int next_id, std::string next_name)
@@ -469,11 +485,11 @@ nlohmann::json Output::to_json(bool is_focused) const
                           { "height", 0 },
                       }                                    },
         { "rect",                 {
-                      { "x", area.top_left.x.as_int() },
-                      { "y", area.top_left.y.as_int() },
-                      { "width", area.size.width.as_int() },
-                      { "height", area.size.height.as_int() },
-                  }                                            },
+                      { "x", scene_node_->position().x },
+                      { "y", scene_node_->position().y },
+                      { "width", scene_node_->size().x },
+                      { "height", scene_node_->size().y }, },
+                  },
         { "nodes",                nodes                                         },
         { "modes",                modes_node                                    },
         { "current_mode",         current_mode_node                             }
@@ -533,7 +549,7 @@ nlohmann::json Output::get_outputs_json(bool) const
     auto const model = output_config.display_info.model.value_or("Unknown");
     auto const serial = output_config.display_info.serial.value_or("0x00000000");
 
-    return {
+    return nlohmann::json{
         { "name",             name_                                         },
         { "make",             make                                          },
         { "model",            model                                         },
@@ -546,10 +562,10 @@ nlohmann::json Output::get_outputs_json(bool) const
         { "subpixel_hinting", subpixel_hinting                              },
         workspace,
         { "rect",             {
-                      { "x", area.top_left.x.as_int() },
-                      { "y", area.top_left.y.as_int() },
-                      { "width", area.size.width.as_int() },
-                      { "height", area.size.height.as_int() },
+                          { "x", scene_node_->position().x },
+                          { "y", scene_node_->position().y },
+                          { "width", scene_node_->size().x },
+                          { "height", scene_node_->size().y },
                   }                                        },
         { "modes",            modes_node                                    },
         { "current_mode",     current_mode_node                             },

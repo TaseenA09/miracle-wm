@@ -42,6 +42,14 @@ SceneNode* SceneGraph::create(SceneNodeId parent)
     return &nodes_.back();
 }
 
+SceneNode::SceneNode(SceneGraph* graph, SceneNodeId id, SceneNodeId parent_id)
+        : graph_ { graph },
+          id { id },
+          parent_id { parent_id }
+        {
+        }
+
+
 SceneNode& SceneNode::operator=(const SceneNode& other)
 {
     graph_ = other.graph_;
@@ -71,6 +79,25 @@ void SceneNode::remove_child(SceneNodeId id)
     {
         return node.id == id;
     });
+}
+
+SceneNode* SceneNode::parent() const
+{
+    if (parent_id == NULL_PARENT_ID)
+        return nullptr;
+
+    auto const& nodes = graph_->nodes_;
+    auto const it = std::ranges::find_if(nodes
+        ,
+        [this](auto const& node)
+        {
+            return node.id == parent_id;
+        });
+
+    if (it == nodes.end())
+        return nullptr;
+
+    return const_cast<SceneNode*>(&(*it));
 }
 
 glm::vec2 SceneNode::position() const

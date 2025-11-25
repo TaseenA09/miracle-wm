@@ -25,6 +25,7 @@ namespace miracle
 class WorkspaceManager;
 class CompositorState;
 class Config;
+class SceneGraph;
 class WindowController;
 class Animator;
 class DisplayConfig;
@@ -35,6 +36,7 @@ public:
     MiralOutputFactory(
         std::shared_ptr<CompositorState> const& state,
         std::shared_ptr<Config> const& options,
+        std::shared_ptr<SceneGraph> const& scene_graph,
         std::shared_ptr<WindowController> const&,
         std::shared_ptr<Animator> const&,
         std::shared_ptr<DisplayConfig> const& display_config);
@@ -46,6 +48,7 @@ public:
 private:
     std::shared_ptr<CompositorState> state;
     std::shared_ptr<Config> config;
+    std::shared_ptr<SceneGraph> scene_graph;
     std::shared_ptr<WindowController> window_controller;
     std::shared_ptr<Animator> animator;
     std::shared_ptr<DisplayConfig> display_config;
