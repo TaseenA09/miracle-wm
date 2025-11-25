@@ -59,6 +59,7 @@ class OutputListenerMultiplexer;
 class DisplayConfig;
 class WindowObserverRegistrar;
 class MagnifierWrapper;
+class SceneGraph;
 
 class Policy : public miral::WindowManagementPolicy
 {
@@ -118,6 +119,7 @@ private:
     miral::WindowManagerTools tools;
     std::shared_ptr<Config> config;
     std::shared_ptr<CompositorState> state;
+    std::shared_ptr<SceneGraph> scene_graph;
     std::shared_ptr<OutputListenerMultiplexer> output_listener;
     std::shared_ptr<ConfigObserverRegistrar> config_observer_registrar;
     std::shared_ptr<Animator> animator;

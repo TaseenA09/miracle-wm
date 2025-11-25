@@ -150,6 +150,7 @@ add_library(miracle-wm-implementation STATIC
         src/binding_event.cpp
         src/magnifier_wrapper.cpp
         src/math_helpers.cpp
+        src/scene_graph.cpp
 )
 
 target_compile_definitions(miracle-wm-implementation PRIVATE COMPILING_AGAINST_DEV=${COMPILING_AGAINST_DEV})

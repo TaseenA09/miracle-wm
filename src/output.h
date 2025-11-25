@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace miracle
 {
+class SceneGraph;
 
 class Output final : public OutputInterface, public std::enable_shared_from_this<Output>
 {
@@ -34,6 +35,7 @@ public:
         OutputConfigDetails const& output_config,
         std::shared_ptr<CompositorState> const& state,
         std::shared_ptr<Config> const& options,
+        std::shared_ptr<SceneGraph> const& scene_graph,
         std::shared_ptr<WindowController> const&,
         std::shared_ptr<Animator> const&);
     ~Output() override;
@@ -80,7 +82,6 @@ private:
 
     std::string name_;
     int id_;
-    geom::Rectangle area;
     OutputConfigDetails output_config;
     std::shared_ptr<CompositorState> state;
     std::shared_ptr<Config> config;
@@ -90,9 +91,6 @@ private:
     std::vector<std::shared_ptr<WorkspaceInterface>> workspaces;
     std::vector<miral::Zone> application_zone_list;
     AnimationHandle handle;
-
-    /// The transform applied to the entire output..
-    glm::mat4 transform = glm::mat4(1.f);
 
     bool is_defunct_ = false;
 };

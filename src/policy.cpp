@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "output_listener.h"
 #include "output_manager.h"
 #include "parent_container.h"
+#include "scene_graph.h"
 #include "window_observer.h"
 #include "workspace_manager.h"
 
@@ -166,6 +167,7 @@ Policy::Policy(
     tools { tools },
     config { config },
     state { state },
+    scene_graph { std::make_shared<SceneGraph>() },
     output_listener { output_listener },
     config_observer_registrar { config_observer_registrar },
     animator(std::make_shared<Animator>(server.the_main_loop())),
